@@ -68,16 +68,12 @@ plot(predict(fitar.s4a),type="l")
 
 # Fit MA(1)
 # effect for month
-fitma.m <- gls(PowerBill ~ -1 + month:Solar + ztime, correlation = corARMA(form=~1|ztime,p=0,q=1),data=solar,method="ML")
+fitma.m <- gls(PowerBill ~ -1 + month:Solar, correlation = corARMA(form=~1|ztime,p=0,q=1),data=solar,method="ML")
 summary(fitma.m)
 plot(predict(fitma.m),type="l")
 
 # effect for 'peak' season
-fitma.ps <- gls(PowerBill ~ -1 + as.factor(season):Solar +ztime, correlation = corARMA(form=~1|ztime,p=0,q=1),data=solar,method="ML")
-summary(fitma.ps)
-plot(predict(fitma.ps),type="l")
-
-fitma.ps <- gls(PowerBill ~ -1 + as.factor(season):Solar +ztime, correlation = corARMA(form=~1|ztime,p=0,q=1),data=solar,method="ML")
+fitma.ps <- gls(PowerBill ~ -1 + as.factor(season):Solar, correlation = corARMA(form=~1|ztime,p=0,q=1),data=solar,method="ML")
 summary(fitma.ps)
 plot(predict(fitma.ps),type="l")
 
@@ -93,6 +89,25 @@ AIC(fitar.ps)
 AIC(fitma.m)
 AIC(fitma.s4a)
 AIC(fitma.ps)
+
+summary(fitar.ps)
+summary(fitma.ps)
+
+fit.ps <- lm(PowerBill ~ -1 + as.factor(season):Solar, data=solar)
+
+
+plot(fitted.values(fitar.ps),resid(fitar.ps))
+# TO DO:
+# Check assumptions
+# - decorrelate and check
+
+# Make predictions 
+# - errors on
+# - simulation study?
+
+# Predictive accuracy
+
+
 
 
 
