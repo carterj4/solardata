@@ -1,0 +1,109 @@
+\documentclass{svproc}
+\usepackage{url}
+\def\UrlFont{\rmfamily}
+\usepackage{amssymb,amsmath,amsfonts,bm}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+\newcommand{\X}{\mathbf{X}}
+\newcommand{\Y}{\mathbf{Y}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\Z}{\mathbf{Z}}
+\newcommand{\z}{\mathbf{z}}
+\newcommand{\Th}{\mathbf{\Theta}}
+
+\newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}} 
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\setcounter{secnumdepth}{3}
+\numberwithin{equation}{section}
+
+\usepackage{setspace}
+\setlength{\belowcaptionskip}{-20pt}
+%\onehalfspacing
+
+<<initiate,echo=FALSE>>=
+library(xtable)
+library(car)
+
+@
+
+\begin{document}
+\mainmatter
+\title{Connecting work performance to employee satisfaction}
+\titlerunning{Credit}
+\author{Brandon Carter, Matt Oehler}
+\authorrunning{Carter and Oehler}
+\institute{Brigham Young University}
+
+\maketitle
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introduction}
+% Does the report sufficiently describe the background of the problem?
+
+
+\section{Data}
+\label{data}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Does the report sufficiently describe and plot the data and point out 
+%  any problems/issues? 
+% Are the goals of the analysis clearly stated?
+
+\section{Methods}
+\label{methods}
+% Is there a description about why this model accomplishes the goals stated above?
+% Is there a description about why this model accounts for the problems/small nuances of the data?
+% Were any explicit or implicit assumptions needed to use the model adequately explained?
+
+
+\subsection{Model}
+% Was the model written out correctly?
+% Were any greek letters used clearly defined?
+
+\subsection{Model Justification}
+\label{modjus}
+% Does the report justify why variables were included and/or excluded?
+% Are the assumptions of the model justified (e.g. via exploratory analysis)?
+% Does the report evaluate how well the model fits the data?
+% If appropriate, does the report describe how well the model predicts?
+
+\section{Results}
+\label{results}
+% Does the report adequately answer the questions posed in the case study?
+% Were estimates of the parameters and their uncertainties given?
+% Were the parameter estimates interpreted in the context of the problem?
+% Did the report summarize the main points of the results in non-statistical terms?
+% Were any figures or tables properly discussed in the text?
+
+\section{Conclusion}
+% Did the report summarize how the goals of the study were met?
+% Did the report discuss any shortcomings of the approach/model used?
+% Did the report provide suggestions for “next steps” in the analysis or further questions that may be of interest?
+ 
+%
+% ---- Bibliography ----
+%
+%\bibliographystyle{plain}
+%\bibliography{comics}
+\newpage
+\textbf{Distribution of work:}
+\begin{itemize}
+\item Intro : Zach
+\item Data : Zach
+\item Methods : Brandon
+\item Model : Brandon
+\item Check Assumptions : Brandon
+\item Model Performance : Zach
+\item Results : Zach
+\item Conclusion : Brandon
+\end{itemize}
+We both independently produced the code to check that our results were consistent.
+\end{document}
