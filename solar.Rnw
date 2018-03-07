@@ -34,6 +34,7 @@ library(car)
 @
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \mainmatter
 \title{Connecting work performance to employee satisfaction}
 \titlerunning{Credit}
@@ -49,6 +50,16 @@ library(car)
 \section{Introduction}
 % Does the report sufficiently describe the background of the problem?
 
+% Solar power is an environmentally friendly alternative to fossil fuels. Additionally, solar
+% customers can save money by installing solar panels on their home to generate their own power
+% rather than relying on power from local power companies. The SolarSavings dataset contains
+% monthly power bills to a customer both on and off solar power. The sales company would like
+% to know (i) how much money per month, on average, does this customer save by converting to
+% power and (ii) the projected time at which the customer will recoup the $15,000 cost of the solar
+% equipment based on the projected monthly savings.
+
+Solar power is a more environmentally friendly source of power than other traditionaly sources such as fossil fuels. Individuals that convert their homes to solar power can also often save money by generating their own power rather then constantly having to depend on power companies. Using the payment history of a single customer's power bills before and after having switched to solar power, we intend to explore a few questions that would be of particular interest to a solar power sales company. We will assess the average monthly savings of a customer who has converted to solar power, and how long it will take on average for a customer to recover the recover the initial $15,000 cost of converting to solar power. With answers to these questions, solar power sales companies can help their customers to better understand the benefits of switching to solar power. This will help the sales company to increase its profits, and contribute to on overall cleaner environment. 
+
 
 \section{Data}
 \label{data}
@@ -56,6 +67,15 @@ library(car)
 % Does the report sufficiently describe and plot the data and point out 
 %  any problems/issues? 
 % Are the goals of the analysis clearly stated?
+
+The data used in this analysis consists of 51 months of power bills for a single customer. The first 29 months are from before the customer converted to solar power, and the last 22 months are from after converting to solar power. In figure \ref{fig:data} we can see that after converting to solar power, the customer had a lower power bill on average. 
+
+\begin{figure}
+\centering
+\includegraphics[width=0.3\textwidth]{solardataplot.pdf}
+\caption{\label{fig:data} History of power bill payents before and after switching to solar power}
+\end{figure}
+
 
 \section{Methods}
 \label{methods}
