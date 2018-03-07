@@ -58,7 +58,7 @@ library(car)
 % power and (ii) the projected time at which the customer will recoup the $15,000 cost of the solar
 % equipment based on the projected monthly savings.
 
-Solar power is a more environmentally friendly source of power than other traditionaly sources such as fossil fuels. Individuals that convert their homes to solar power can also often save money by generating their own power rather then constantly having to depend on power companies. Using the payment history of a single customer's power bills before and after having switched to solar power, we intend to explore a few questions that would be of particular interest to a solar power sales company. We will assess the average monthly savings of a customer who has converted to solar power, and how long it will take on average for a customer to recover the recover the initial $15,000 cost of converting to solar power. With answers to these questions, solar power sales companies can help their customers to better understand the benefits of switching to solar power. This will help the sales company to increase its profits, and contribute to on overall cleaner environment. 
+Solar power is a more environmentally friendly source of power than other traditionaly sources such as fossil fuels. Individuals that convert their homes to solar power can also often save money by generating their own power rather then constantly having to depend on power companies. Using the payment history of a single customer's power bills before and after having switched to solar power, we intend to explore a few questions that would be of particular interest to a solar power sales company. We will assess the average monthly savings of a customer who has converted to solar power, and how long it will take on average for a customer to recover the recover the initial \$15,000 cost of converting to solar power. With answers to these questions, solar power sales companies can help their customers to better understand the benefits of switching to solar power. This will help the sales company to increase its profits, and contribute to on overall cleaner environment. 
 
 
 \section{Data}
@@ -72,7 +72,7 @@ The data used in this analysis consists of 51 months of power bills for a single
 
 \begin{figure}
 \centering
-\includegraphics[width=0.3\textwidth]{solardataplot.pdf}
+\includegraphics[width=0.5\textwidth]{solardataplot.pdf}
 \caption{\label{fig:data} History of power bill payents before and after switching to solar power}
 \end{figure}
 
