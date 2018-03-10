@@ -122,7 +122,6 @@ n.sn <- sum(solar$Solar == "N")
 n.sy<- sum(solar$Solar == "Y")
 
 # 1) predict how much has been saved already
-
 w <- "N"
 n <- n.sn
 k <- n.sy 
@@ -136,17 +135,8 @@ bw <- 1:2
 
 pred.savings <- Xstar %*% bhat[bw] + R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% (solar[solar$Solar == w,"PowerBill"][1:n] - X %*% bhat[bw])
 pred.var <- R[n+1:k,n+1:k] - R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% R[1:n,n+1:k]
-
-
-# Simulate data to get confidence interval on Amount Saved (validate CI)
-single.draw <- function(k,mu,R) {
-  vv <- t(chol(R))
-  vv %*% rnorm(k) + mu
-}
-m <- 5000
-preds <- sapply(1:m, function(i) single.draw(k,pred.savings,pred.var))
-ci.pred.s <- t(apply(preds,1,quantile,p=c(0.025,0.975)))
-
+  list(pred.mn,pred.var)
+  
 A <- matrix(1,ncol=k)
 # Expected amount saved
 m.sav <- A %*% (pred.savings - solar[solar$Solar == "Y","PowerBill"])
@@ -155,6 +145,168 @@ m.sav <- as.numeric(m.sav)
 # Confidence interval on amount saved
 sd.sav <- as.numeric(sqrt(A %*% pred.var %*% t(A)))
 m.sav + c(-1,1) * qnorm(0.975) * sd.sav
+
+
+prediction <- function(n,k,R,X.all,bw,w) {
+  Xstar <- X.all[n+1:k,]
+  X <- X.all[1:n,]
+  pred.mn <- Xstar %*% bhat[bw] + R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% (solar[solar$Solar == w,"PowerBill"][1:n] - X %*% bhat[bw])
+  pred.var <- R[n+1:k,n+1:k] - R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% R[1:n,n+1:k]
+  list(pred.mn,pred.var)
+}
+
+
+# General prediction for k months into the future into the future
+k <- 12
+
+predict.sav <- function(k) {
+	months <- c(solar$month.n,rep(c(2:12,1),times=ceiling(k/12))[1:k])
+	
+	R.n <- diag(k+n.sn+n.sy)
+	R.n <- sigma2*phi^(abs(row(R.n) - col(R.n)))
+	nn <- n.sn
+	kn <- k+n.sy
+	xn <- as.factor(sn[months]+1)
+	Xn.all <- model.matrix(~-1 + xn)
+	
+	R.s <- diag(k+n.sy)
+	R.s <- sigma2*phi^(abs(row(R.s) - col(R.s)))
+	ns <- n.sy
+	ks <- k
+	xs <- as.factor(sy[months[(n.sn+1):length(months)]]+1)
+	Xs.all <- model.matrix(~-1 + xs)
+	
+	if (k != 0) {
+	  p.s <- prediction(ns,ks,R.s,Xs.all,3:4,"Y")
+	  As <- matrix(1,ncol=k)
+	  v.s <- As %*% p.s[[2]] %*% t(As) 
+	} else {
+	  p.s <- list(0,0)
+	  v.s <- 0
+	}
+	p.n <- prediction(nn,kn,R.n,Xn.all,1:2,"N")
+	
+	m.sav <- sum(p.n[[1]]) - sum(p.s[[1]]) - sum(solar[solar$Solar == "Y","PowerBill"])
+	
+	An <- matrix(1,ncol=n.sy+k)
+	sd.sav <- as.numeric(sqrt(v.s + An %*% p.n[[2]] %*% t(An)))
+	c(est=m.sav, m.sav + c(lower=-1,upper=1) * qnorm(0.975) * sd.sav)
+}
+
+# show savings for years
+years <- 5
+m.out <- seq(0,years*12,by=12)
+
+out <- sapply(m.out,predict.sav)
+plot(0:years,out[1,],type="l",ylim=c(min(out),max(out)))
+lines(0:years,out[2,],lty=2)
+lines(0:years,out[3,],lty=2)
+
+# show savings by months
+m <- 12*8
+out <- sapply(0:m,predict.sav)
+plot(0:m,out[1,],type="l",ylim=c(min(out),max(out)))
+lines(0:m,out[2,],lty=2)
+lines(0:m,out[3,],lty=2)
+abline(h=8000,col="red")
+which(out[2,] > 8000)[1]
+which(out[3,] > 8000)[1]
+
+# predict number of months to recoop $8000 dollars
+single.draw <- function(k,mu,R) {
+  vv <- t(chol(R))
+  vv %*% rnorm(k) + mu
+}
+
+predict.sav.sim <- function(m=5000,k) {
+	months <- c(solar$month.n,rep(c(2:12,1),times=ceiling(k/12))[1:k])
+	
+	R.n <- diag(k+n.sn+n.sy)
+	R.n <- sigma2*phi^(abs(row(R.n) - col(R.n)))
+	nn <- n.sn
+	kn <- k+n.sy
+	xn <- as.factor(sn[months]+1)
+	Xn.all <- model.matrix(~-1 + xn)
+	
+	R.s <- diag(k+n.sy)
+	R.s <- sigma2*phi^(abs(row(R.s) - col(R.s)))
+	ns <- n.sy
+	ks <- k
+	xs <- as.factor(sy[months[(n.sn+1):length(months)]]+1)
+	Xs.all <- model.matrix(~-1 + xs)
+
+	p.s <- prediction(ns,ks,R.s,Xs.all,3:4,"Y")
+	p.n <- prediction(nn,kn,R.n,Xn.all,1:2,"N")
+	
+	m.sav <- sum(p.n[[1]]) - sum(p.s[[1]]) - sum(solar[solar$Solar == "Y","PowerBill"])
+	
+	single.draw <- function(k,mu,R) {
+     vv <- t(chol(R))
+     p <- vv %*% rnorm(k) + mu
+     p[p<0] <- 0
+     p
+    }
+    pred.s <- sapply(1:m, function(i) {
+      pb.s <- c(solar[solar$Solar == "Y","PowerBill"], single.draw(ks,p.s[[1]],p.s[[2]]))
+      pb.n <- single.draw(kn,p.n[[1]],p.n[[2]])
+      cumsum(pb.n - pb.s)
+    } )
+    
+   rbind(est=apply(pred.s,1,mean),apply(pred.s,1,quantile,p=c(0.025,0.975)))
+}
+
+predict.days.sim <- function(m=5000) {
+	k <- 12*8
+	months <- c(solar$month.n,rep(c(2:12,1),times=ceiling(k/12))[1:k])
+	
+	R.n <- diag(k+n.sn+n.sy)
+	R.n <- sigma2*phi^(abs(row(R.n) - col(R.n)))
+	nn <- n.sn
+	kn <- k+n.sy
+	xn <- as.factor(sn[months]+1)
+	Xn.all <- model.matrix(~-1 + xn)
+	
+	R.s <- diag(k+n.sy)
+	R.s <- sigma2*phi^(abs(row(R.s) - col(R.s)))
+	ns <- n.sy
+	ks <- k
+	xs <- as.factor(sy[months[(n.sn+1):length(months)]]+1)
+	Xs.all <- model.matrix(~-1 + xs)
+
+	p.s <- prediction(ns,ks,R.s,Xs.all,3:4,"Y")
+	p.n <- prediction(nn,kn,R.n,Xn.all,1:2,"N")
+	
+	m.sav <- sum(p.n[[1]]) - sum(p.s[[1]]) - sum(solar[solar$Solar == "Y","PowerBill"])
+	
+	single.draw <- function(k,mu,R) {
+     vv <- t(chol(R))
+     p <- vv %*% rnorm(k) + mu
+     p[p<0] <- 0
+     p
+    }
+    pred.s <- sapply(1:m, function(i) {
+      pb.s <- c(solar[solar$Solar == "Y","PowerBill"], single.draw(ks,p.s[[1]],p.s[[2]]))
+      pb.n <- single.draw(kn,p.n[[1]],p.n[[2]])
+      which(cumsum(pb.n - pb.s) > 8000)[1] - n.sy
+    } )
+    
+   c(est=mean(pred.s),quantile(pred.s,p=c(0.025,0.975)))
+}
+
+predict.days.sim()
+
+
+
+
+
+
+
+# Simulate data to get confidence interval on Amount Saved (validate CI)
+
+m <- 5000
+preds <- sapply(1:m, function(i) single.draw(k,pred.savings,pred.var))
+ci.pred.s <- t(apply(preds,1,quantile,p=c(0.025,0.975)))
+
 
 # via simulation
 preds.sav <- apply(preds,2,function(x) sum(x - solar[solar$Solar == "Y","PowerBill"]))
