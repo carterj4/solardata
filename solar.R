@@ -112,9 +112,8 @@ plot(predict(fitma.ps),type="l")
 AIC(fitarma.ps,fitarma.m,fitar.ps,fitma.ps,fitar.m,fitma.m)
 
 # Prediction into the future
-fitar.ps$modelStruct$corStruct
 sigma2 <- fitar.ps$sigma^2
-phi <- -0.01488195
+phi <- coef(fitar.ps$modelStruct$corStruct,unconstrained=FALSE)
 
 # AR(1)
 intervals(fitar.ps)
@@ -123,6 +122,7 @@ n.sn <- sum(solar$Solar == "N")
 n.sy<- sum(solar$Solar == "Y")
 
 # 1) predict how much has been saved already
+
 w <- "N"
 n <- n.sn
 k <- n.sy 
