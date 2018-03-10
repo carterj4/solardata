@@ -27,6 +27,9 @@
 \setlength{\belowcaptionskip}{-20pt}
 %\onehalfspacing
 
+\usepackage{floatrow}% for side by side figures
+
+
 <<initiate,echo=FALSE>>=
 library(xtable)
 library(car)
@@ -44,7 +47,7 @@ library(car)
 
 \maketitle
 \begin{abstract}
-
+Solar power is a more environmentally friendly source of power than other traditionaly sources such as fossil fuels. In this study we looked into the potential for customers to save money by converting their homes to solar power. Specifically, we looked at the payment history of a single customer before and after converting to solar power, and used a first order autoregressive model to assess how much he was saving on his monthly power bill and how long it would take him to recover the intial cost of converting to solar power.
 \end{abstract}
 
 \section{Introduction}
@@ -84,9 +87,40 @@ The data used in this analysis consists of 51 months of power bills for a single
 % Were any explicit or implicit assumptions needed to use the model adequately explained?
 
 
+  \begin{figure}[!ht]
+    \centering
+    \begin{floatrow}
+      \ffigbox[\FBwidth]{\caption{\label{smoothnon}Payment trends for regular power}}
+      {
+		\includegraphics[width=0.4\textwidth]{smoothregular.pdf}
+      }
+      \ffigbox[\FBwidth]{\caption{\label{smoothsol}Payment trends for solar power}}
+      {%
+        \includegraphics[width=0.4\textwidth]{smoothsolar.pdf}
+      }
+    \end{floatrow}
+  \end{figure}
+
+
 \subsection{Model}
 % Was the model written out correctly?
 % Were any greek letters used clearly defined?
+
+The model we used for this analysis a multivariate normal distribution, as shown below in equation \ref{modeq}. Each of the terms in the model are also explicitly defined below. 
+
+\begin{equation}
+  \Y \sim \mathbf{N} ( \X \boldsymbol{\beta} , \sigma^{2} \mathbf{R} )
+\label{modeq}
+\end{equation}
+
+    \begin{align*}
+        \Y &= \text{response vector} \quad (nx1)\\
+        \mathbf{X} &= \text{model matrix} \quad (nxp)\\
+        \boldsymbol{\beta} &= \text{model coefficients} \quad (px1)\\
+        \sigma^{2} &= \text{variance term} \quad (scalar) \\
+        \mathbf{R} &= \text{structure of covariance matrix} \quad (nxn)
+    \end{align*}
+
 
 \subsection{Model Justification}
 \label{modjus}
@@ -94,6 +128,13 @@ The data used in this analysis consists of 51 months of power bills for a single
 % Are the assumptions of the model justified (e.g. via exploratory analysis)?
 % Does the report evaluate how well the model fits the data?
 % If appropriate, does the report describe how well the model predicts?
+
+% graphic of the model fit (we can move this to a different section if needed)
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{modelfit.pdf}
+\caption{\label{fig:data} AR(1) Model compared with observations from data}
+\end{figure}
 
 \section{Results}
 \label{results}
@@ -103,10 +144,30 @@ The data used in this analysis consists of 51 months of power bills for a single
 % Did the report summarize the main points of the results in non-statistical terms?
 % Were any figures or tables properly discussed in the text?
 
+%table of coeffecients for model (we can append uncertainties to this table
+%or add them separately)
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Sat Mar 10 11:59:15 2018
+\begin{table}[ht]
+\centering
+\begin{tabular}{rr}
+  \hline
+ & Coefficient Estimates \\ 
+  \hline
+  Season1:SolarN & 104.89 \\ 
+  Season2:SolarN & 180.31 \\ 
+  Season1:SolarY & 21.50 \\ 
+  Season2:SolarY & 83.87 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
 \section{Conclusion}
 % Did the report summarize how the goals of the study were met?
 % Did the report discuss any shortcomings of the approach/model used?
-% Did the report provide suggestions for “next steps” in the analysis or further questions that may be of interest?
+% Did the report provide suggestions for 'next steps' in the analysis or further questions that may be of interest?
+
  
 %
 % ---- Bibliography ----
@@ -125,5 +186,4 @@ The data used in this analysis consists of 51 months of power bills for a single
 \item Results : Zach
 \item Conclusion : Brandon
 \end{itemize}
-We both independently produced the code to check that our results were consistent.
 \end{document}

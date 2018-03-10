@@ -22,6 +22,19 @@ scatter.smooth(solar$month.n[solar$Solar == "N"],solar$PowerBill[solar$Solar == 
 
 scatter.smooth(solar$month.n[solar$Solar == "Y"],solar$PowerBill[solar$Solar == "Y"],degree=2)
 
+# make plot for seasonality by month
+# par(mfrow=c(2,1))
+pdf('smoothregular.pdf')
+scatter.smooth(solar$month.n[solar$Solar == "N"],
+               solar$PowerBill[solar$Solar == "N"],degree=2,
+               ylab='Payment (Regular)',xlab='Month')#,xaxt='n')
+dev.off()
+pdf('smoothsolar.pdf')
+scatter.smooth(solar$month.n[solar$Solar == "Y"],
+               solar$PowerBill[solar$Solar == "Y"],degree=2,
+               ylab='Payment (Solar)',xlab='Month')
+dev.off()
+
 
 # Different seasonality for Solar and Non Solar
 sn <- c(0,0,0,0,0,1,1,1,1,0,0,0) 
@@ -120,6 +133,34 @@ intervals(fitar.ps)
 
 n.sn <- sum(solar$Solar == "N")
 n.sy<- sum(solar$Solar == "Y")
+
+
+# calculating R squared for the fitar.ps
+ss.res <- sum((solar$PowerBill - predict(fitar.ps))^2)
+ss.total <- sum((solar$PowerBill - mean(solar$PowerBill))^2)
+Rsquared <- 1-(ss.res/ss.total)
+Rsquared
+
+#make a plot of data vs fitar.ps model
+plot(1:nrow(solar),solar$PowerBill,type='l',lwd=1,
+     xaxt = 'n',xlab='',ylab='Power Bill',main='AR(1) Model Fit')
+axis(1, at = seq(1, 51, by = 5),labels=solar$Date[seq(1, 51, by = 5)], las=2)
+colors <- c('blue','red')
+my.pch <- c(1,16)
+abline(v=which(solar$Solar=='Y')[1],col='red',lty=2)
+lines(predict(fitar.ps),type="l",col='blue',lwd = 2)
+legend("topright",col=c("black","blue"),legend=c("Data", "Model"),lty=1,lwd=c(1,2))
+
+#make a table of the model summary
+library(xtable)
+xtable(t(t(fitar.ps$coefficients)))
+
+intervals(fitar.ps) #gets confidence intervals for model values
+
+plot(fitar.ps$fitted,fitar.ps$residuals)
+
+
+
 
 # 1) predict how much has been saved already
 w <- "N"
