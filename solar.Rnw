@@ -86,26 +86,6 @@ The data used in this analysis consists of 51 months of power bills for a single
 % Is there a description about why this model accounts for the problems/small nuances of the data?
 % Were any explicit or implicit assumptions needed to use the model adequately explained?
 
-
-  \begin{figure}[!ht]
-    \centering
-    \begin{floatrow}
-      \ffigbox[\FBwidth]{\caption{\label{smoothnon}Payment trends for regular power}}
-      {
-		\includegraphics[width=0.4\textwidth]{smoothregular.pdf}
-      }
-      \ffigbox[\FBwidth]{\caption{\label{smoothsol}Payment trends for solar power}}
-      {%
-        \includegraphics[width=0.4\textwidth]{smoothsolar.pdf}
-      }
-    \end{floatrow}
-  \end{figure}
-
-
-\subsection{Model}
-% Was the model written out correctly?
-% Were any greek letters used clearly defined?
-
 To analyze this data we used a Gaussian process, which is a finite collection of random variables that follow a multivariate normal distribution, as shown below in equation \ref{modeq}. Each of the terms in the model are also explicitly defined below. 
 
 \begin{equation}
@@ -122,8 +102,46 @@ To analyze this data we used a Gaussian process, which is a finite collection of
     \mathbf{R} &= \text{structure of covariance matrix} \quad (nxn)
 \end{align*}
 
-The guassian proccess model allows for data that is correlated in the response. 
-The added flexibility in the correlation structure allows us to obtain more accurate variance estimates and thus our prediction intervals will be more accurate than if we fit an uncorrelated 
+The guassian proccess model allows for data that is correlated in the response. We assume that that the powerbills are correlated with an autoregressive structure shown below:
+$$
+\sigma^2
+\begin{bmatrix}
+1  & \rho & \rho^2 & \hdots & \rho^n \\
+\rho & 1 & \rho & \hdots & \rho^{n-1} \\
+\rho^2 & \rho & 1 & \hdots & \rho^{n-2} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+\rho^n & \rho^{n-1} & \rho^{n-2} & \hdots & 1
+\end{bmatrix}
+$$
+This correlation structure assumes that the powerbill for each month is most correlated with the months nearest in time and successively less correlated with each previous month.
+The added flexibility in the correlation structure allows us to obtain more accurate variance estimates. Therefore, our prediction intervals will be more accurate with the autoregressive model than if we fit an uncorrelated linear model. 
+
+ 
+
+
+\subsection{Model}
+% Was the model written out correctly?
+% Were any greek letters used clearly defined?
+ \begin{figure}[!ht]
+    \centering
+    \begin{floatrow}
+      \ffigbox[\FBwidth]{\caption{\label{smoothnon}Payment trends for regular power}}
+      {
+		\includegraphics[width=0.4\textwidth]{smoothregular.pdf}
+      }
+      \ffigbox[\FBwidth]{\caption{\label{smoothsol}Payment trends for solar power}}
+      {%
+        \includegraphics[width=0.4\textwidth]{smoothsolar.pdf}
+      }
+    \end{floatrow}
+  \end{figure}
+  
+Figures \ref{smoothnon} and \ref{smoothsol} show the the seasonal trends in in powerbill for regular power and solar power. Regular power bills are much higher for June through September; Solar power bills are greater from November through February. We create a "peak season" indicator variable to allow for different powerbill prices for the respective peak season months given solar and regular power. We fit a cell means model for each combination of Solar power status and the peak season indicator. Thus our $\boldsymbol{\beta}$ vector is a vector of means for each combination. The is model written as follows:
+$$
+\mathrm{Y} = \mathtt{Solar0:Peak0} \mu_1 + \mathtt{Solar0:Peak1} \mu_2 + \mathtt{Solar1:Peak0} \mu_3 + \mathtt{Solar1:Peak1} \mu_4 + \epsilon
+$$
+where $\epsilon|\mathtt{Solar}$ has an autoregressive correlation structure with parameters $\sigma^2$ and $\rho$. Thus we assume that the times series for the power bills for solar and non solar are independent of each other. This assumption is not unreasonable since we adjust for the the peak season effect for solar and non solar power bills.
+
 \subsection{Model Justification}
 \label{modjus}
 % Does the report justify why variables were included and/or excluded?
@@ -175,12 +193,12 @@ Table \ref{coef} gives the estimated coefficients for our model. We estimate the
   \hline
  Coefficient & 2.5\% & Estimate & 97.5\% \\ 
   \hline
-  Regular  & 93.10 & 104.89 & 116.67 \\ 
+  Regular Normal & 93.10 & 104.89 & 116.67 \\ 
   Regular Peak & 161.19 & 180.31 & 199.44 \\ 
-  Solar & 7.56 & 21.50 & 35.45 \\ 
+  Solar Normal & 7.56 & 21.50 & 35.45 \\ 
   Solar Peak & 63.42 & 83.87 & 104.33 \\ 
-  Phi & -0.32 & -0.01 & 0.29 \\ 
-  Residual SE & 21.50 & 26.10 & 31.70 \\ 
+  Rho & -0.32 & -0.01 & 0.29 \\ 
+  Residual Se & 21.50 & 26.10 & 31.70 \\ 
    \hline
 \end{tabular}
 \caption{Table of estimated coefficients}
