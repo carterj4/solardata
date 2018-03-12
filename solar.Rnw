@@ -136,6 +136,22 @@ The model we used for this analysis a multivariate normal distribution, as shown
 \caption{\label{fig:data} AR(1) Model compared with observations from data}
 \end{figure}
 
+
+%residual plots for model assumptions
+  \begin{figure}[!ht]
+    \centering
+    \begin{floatrow}
+      \ffigbox[\FBwidth]{\caption{\label{resplot}Plot of fitted values vs residuals}}
+      {
+		\includegraphics[width=0.4\textwidth]{residplot.pdf}
+      }
+      \ffigbox[\FBwidth]{\caption{\label{reshist}histogram of residuals}}
+      {%
+        \includegraphics[width=0.4\textwidth]{residhist.pdf}
+      }
+    \end{floatrow}
+  \end{figure}
+
 \section{Results}
 \label{results}
 % Does the report adequately answer the questions posed in the case study?
@@ -146,18 +162,21 @@ The model we used for this analysis a multivariate normal distribution, as shown
 
 %table of coeffecients for model (we can append uncertainties to this table
 %or add them separately)
+
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Sat Mar 10 11:59:15 2018
+% Sun Mar 11 22:51:14 2018
 \begin{table}[ht]
 \centering
-\begin{tabular}{rr}
+\begin{tabular}{rrrr}
   \hline
- & Coefficient Estimates \\ 
+ Coefficient & 2.5\% & Estimate & 97.5\% \\ 
   \hline
-  Season1:SolarN & 104.89 \\ 
-  Season2:SolarN & 180.31 \\ 
-  Season1:SolarY & 21.50 \\ 
-  Season2:SolarY & 83.87 \\ 
+  Season1:SolarN & 93.10 & 104.89 & 116.67 \\ 
+  Season2:SolarN & 161.19 & 180.31 & 199.44 \\ 
+  Season1:SolarY & 7.56 & 21.50 & 35.45 \\ 
+  Season2:SolarY & 63.42 & 83.87 & 104.33 \\ 
+  Phi & -0.32 & -0.01 & 0.29 \\ 
+  Residual SE & 21.50 & 26.10 & 31.70 \\ 
    \hline
 \end{tabular}
 \end{table}
@@ -177,13 +196,13 @@ The model we used for this analysis a multivariate normal distribution, as shown
 \newpage
 \textbf{Distribution of work:}
 \begin{itemize}
-\item Intro : Zach
-\item Data : Zach
+\item Intro : Matt
+\item Data : Matt
 \item Methods : Brandon
 \item Model : Brandon
-\item Check Assumptions : Brandon
-\item Model Performance : Zach
-\item Results : Zach
+\item Check Assumptions : Matt
+\item Model Performance : Brandon
+\item Results : Brandon
 \item Conclusion : Brandon
 \end{itemize}
 \end{document}
