@@ -49,7 +49,6 @@ acf(solar$PowerBill[solar$Solar == "N"])
 acf(solar$PowerBill[solar$Solar == "Y"])
 
 
-
 #########################
 # Ztime models by month # 
 #########################
@@ -136,10 +135,10 @@ n.sy<- sum(solar$Solar == "Y")
 
 
 # calculating R squared for the fitar.ps
-# ss.res <- sum((solar$PowerBill - predict(fitar.ps))^2)
-# ss.total <- sum((solar$PowerBill - mean(solar$PowerBill))^2)
-# Rsquared <- 1-(ss.res/ss.total)
-# Rsquared
+ss.res <- sum((solar$PowerBill - predict(fitar.ps))^2)
+ss.total <- sum((solar$PowerBill - mean(solar$PowerBill))^2)
+Rsquared <- 1-(ss.res/ss.total)
+Rsquared
 
 #make a plot of data vs fitar.ps model
 plot(1:nrow(solar),solar$PowerBill,type='l',lwd=1,
@@ -160,13 +159,12 @@ intervals(fitar.ps) #gets confidence intervals for model values
 plot(fitar.ps$fitted,fitar.ps$residuals)
 
 ### De-correlate model to check assumptions
-my.X<- model.matrix(fitar.ps,data=solar)
+my.X <- model.matrix(fitar.ps,data=solar)
 dim(my.X)
 
 #de-correlate model to be able to check assumptions
 # L.inv * Y ~ N(L.inv * X * beta, L.inv * L * t(L) * t(L.inv))
 #make R
-w <- "N"
 n <- n.sn
 k <- n.sy 
 R <- diag(k+n)
@@ -189,7 +187,7 @@ library(car)
 avPlots(decorr.mod)
 
 ##
-
+solve(L) %*% L %*% t(L) %*% t(solve(L))
 
 
 
@@ -219,17 +217,64 @@ sd.sav <- as.numeric(sqrt(A %*% pred.var %*% t(A)))
 m.sav + c(-1,1) * qnorm(0.975) * sd.sav
 
 
-prediction <- function(n,k,R,X.all,bw,w) {
+prediction <- function(n,k,R,X.all,w) {
   Xstar <- X.all[n+1:k,]
   X <- X.all[1:n,]
-  pred.mn <- Xstar %*% bhat[bw] + R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% (solar[solar$Solar == w,"PowerBill"][1:n] - X %*% bhat[bw])
+  pred.mn <- Xstar %*% bhat + R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% (solar[solar$Solar == w,"PowerBill"][1:n] - X %*% bhat)
   pred.var <- R[n+1:k,n+1:k] - R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% R[1:n,n+1:k]
   list(pred.mn,pred.var)
 }
+############################################
+# Cross validation for solar and non solar #
+############################################
+k <- 12
+
+n.sn
+n.sy
+X.all <- model.matrix(~-1 + as.factor(season):Solar, data=solar)
+
+R.n <- diag(n.sn)
+R.n <- sigma2*phi^(abs(row(R.n) - col(R.n)))
+nn <- n.sn - k
+kn <- k
+Xn.all <- X.all[solar$Solar == "N",]
+
+R.s <- diag(n.sy)
+R.s <- sigma2*phi^(abs(row(R.s) - col(R.s)))
+ns <- n.sy - k
+ks <- k
+Xs.all <- X.all[solar$Solar == "Y",]
+
+fitar.psCV <- gls(PowerBill ~ -1 + as.factor(season):Solar, correlation = corARMA(form=~rtime|Solar,p=1,q=0),data=solar[c(1:(29-k),30:(51-k)),],method="ML")
+bhat <- coef(fitar.psCV)
+
+
+prediction2 <- function(n,k,R,X.all,w,bhat) {
+  Xstar <- X.all[n+1:k,]
+  X <- X.all[1:n,]
+  pred.mn <- Xstar %*% bhat + R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% (solar[solar$Solar == w,"PowerBill"][1:n] - X %*% bhat)
+  pred.var <- R[n+1:k,n+1:k] - R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% R[1:n,n+1:k]
+  cbind(pred.mn,pred.mn,pred.mn) + qnorm(0.975)*sqrt(diag(pred.var)) %*% cbind(0,-1,1)
+}
+
+p.s <- prediction2(ns,ks,R.s,Xs.all,"Y",bhat)
+p.n <- prediction2(nn,kn,R.n,Xn.all,"N",bhat)
+
+# RMSE (estimating the last k points)
+est <- c(p.n[,1],p.s[,1])
+act <- solar$PowerBill[c((29-(k-1)):29,(51-(k-1)):51)]
+cbind(solar[c((29-(k-1)):29,(51-(k-1)):51),] ,est)
+sqrt(sum((est - act)^2))
+
+# Prediction coverage
+ci.all <- rbind(p.n[,2:3],p.s[,2:3])
+mean(apply(ci.all - act,1,prod) < 0)
+
+
 
 
 # General prediction for k months into the future into the future
-k <- 12
+
 
 predict.sav <- function(k) {
 	months <- c(solar$month.n,rep(c(2:12,1),times=ceiling(k/12))[1:k])
@@ -275,14 +320,17 @@ lines(0:years,out[2,],lty=2)
 lines(0:years,out[3,],lty=2)
 
 # show savings by months
+solar
 m <- 12*8
 out <- sapply(0:m,predict.sav)
-plot(0:m,out[1,],type="l",ylim=c(min(out),max(out)))
+save(out,m,file="prediction.Rbin")
+plot(0:m,out[1,],type="l",ylim=c(min(out),max(out)),xlab="Months from Feb 2018",ylab="Estimated Savings ($)")
 lines(0:m,out[2,],lty=2)
 lines(0:m,out[3,],lty=2)
 abline(h=8000,col="red")
-which(out[2,] > 8000)[1]
-which(out[3,] > 8000)[1]
+abline(v=(70 + 22)/12,col="blue")
+abline(v=which(out[2,] > 8000)[1] - 1, col="blue",lty=2)
+abline(v=which(out[3,] > 8000)[1],col="blue",lty=2)
 
 # predict number of months to recoop $8000 dollars
 single.draw <- function(k,mu,R) {
@@ -366,6 +414,8 @@ predict.days.sim <- function(m=5000) {
 }
 
 predict.days.sim()
+library(coda)
+HPDinterval(as.mcmc(pred.s),prob=0.95)
 
 
 
