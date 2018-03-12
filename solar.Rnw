@@ -106,20 +106,21 @@ The data used in this analysis consists of 51 months of power bills for a single
 % Was the model written out correctly?
 % Were any greek letters used clearly defined?
 
-The model we used for this analysis a multivariate normal distribution, as shown below in equation \ref{modeq}. Each of the terms in the model are also explicitly defined below. 
+To analyze this data we used a Gaussian process, which is a finite collection of random variables that follow a multivariate normal distribution, as shown below in equation \ref{modeq}. Each of the terms in the model are also explicitly defined below. 
 
 \begin{equation}
   \Y \sim \mathbf{N} ( \X \boldsymbol{\beta} , \sigma^{2} \mathbf{R} )
 \label{modeq}
 \end{equation}
 
-    \begin{align*}
-        \Y &= \text{response vector} \quad (nx1)\\
-        \mathbf{X} &= \text{model matrix} \quad (nxp)\\
-        \boldsymbol{\beta} &= \text{model coefficients} \quad (px1)\\
-        \sigma^{2} &= \text{variance term} \quad (scalar) \\
-        \mathbf{R} &= \text{structure of covariance matrix} \quad (nxn)
-    \end{align*}
+
+\begin{align*}
+    \Y &= \text{response vector} \quad (nx1)\\
+    \mathbf{X} &= \text{model matrix} \quad (nxp)\\
+    \boldsymbol{\beta} &= \text{model coefficients} \quad (px1)\\
+    \sigma^{2} &= \text{variance term} \quad (scalar) \\
+    \mathbf{R} &= \text{structure of covariance matrix} \quad (nxn)
+\end{align*}
 
 
 \subsection{Model Justification}
@@ -133,9 +134,10 @@ The model we used for this analysis a multivariate normal distribution, as shown
 \begin{figure}
 \centering
 \includegraphics[width=0.5\textwidth]{modelfit.pdf}
-\caption{\label{fig:data} AR(1) Model compared with observations from data}
+\caption{\label{modfit} AR(1) Model compared with observations from data}
 \end{figure}
 
+When performing Gaussian process regression, there are a few assumptions that need to hold. We assume that the data are multivariate-normally distributed and that there is constant variance. Since we are accounting for the correlation in the data, we do not assume independence, but rather dependence. These assumptions however are hard to verify given that we only have one correlated observation. So to check the assumptions we can 'decorrelate' the model using the lower cholesky decomposition of the covariance matrix of the original model, $\sigma^{2} \mathbf{R}$.  Once decorrelated, we use plots of the residuals to verify the assumptions of constant variance, and normally distributed residuals. Figures \ref{resplot} and \ref{reshist} show the plot of fitted values vs residuals and the distribution of the residuals respectively. The plots show that the variance is only somewhat constant, and that the residuals are approximately normally distributed. Based on these results we chose to continue with the analysis. We also used this decorrelated model to get an $R^2$ value to assess the fit of our model. The resulting $R^2$ value of 0.8057 tells us that 80\% of the variance in monthly powerbill payment is explained by our model. The goodness of fit can be visualized in figure \ref{modfit} which shows the fitted model plotted along with the observed data. We conclude that our model fits the data well, especially considering that we have relatively limited data. 
 
 %residual plots for model assumptions
   \begin{figure}[!ht]
@@ -145,7 +147,7 @@ The model we used for this analysis a multivariate normal distribution, as shown
       {
 		\includegraphics[width=0.4\textwidth]{residplot.pdf}
       }
-      \ffigbox[\FBwidth]{\caption{\label{reshist}histogram of residuals}}
+      \ffigbox[\FBwidth]{\caption{\label{reshist}Histogram of residuals}}
       {%
         \includegraphics[width=0.4\textwidth]{residhist.pdf}
       }
@@ -193,13 +195,14 @@ The model we used for this analysis a multivariate normal distribution, as shown
 %
 %\bibliographystyle{plain}
 %\bibliography{comics}
+% \pagebreak
 \newpage
 \textbf{Distribution of work:}
 \begin{itemize}
 \item Intro : Matt
 \item Data : Matt
 \item Methods : Brandon
-\item Model : Brandon
+\item Model : Matt
 \item Check Assumptions : Matt
 \item Model Performance : Brandon
 \item Results : Brandon
