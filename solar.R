@@ -136,10 +136,10 @@ n.sy<- sum(solar$Solar == "Y")
 
 
 # calculating R squared for the fitar.ps
-ss.res <- sum((solar$PowerBill - predict(fitar.ps))^2)
-ss.total <- sum((solar$PowerBill - mean(solar$PowerBill))^2)
-Rsquared <- 1-(ss.res/ss.total)
-Rsquared
+# ss.res <- sum((solar$PowerBill - predict(fitar.ps))^2)
+# ss.total <- sum((solar$PowerBill - mean(solar$PowerBill))^2)
+# Rsquared <- 1-(ss.res/ss.total)
+# Rsquared
 
 #make a plot of data vs fitar.ps model
 plot(1:nrow(solar),solar$PowerBill,type='l',lwd=1,
@@ -158,6 +158,37 @@ xtable(t(t(fitar.ps$coefficients)))
 intervals(fitar.ps) #gets confidence intervals for model values
 
 plot(fitar.ps$fitted,fitar.ps$residuals)
+
+### De-correlate model to check assumptions
+my.X<- model.matrix(fitar.ps,data=solar)
+dim(my.X)
+
+#de-correlate model to be able to check assumptions
+# L.inv * Y ~ N(L.inv * X * beta, L.inv * L * t(L) * t(L.inv))
+#make R
+w <- "N"
+n <- n.sn
+k <- n.sy 
+R <- diag(k+n)
+R <- sigma2*phi^(abs(row(R) - col(R)))
+
+L<- t(chol(R))
+Ystar <- solve(L) %*% solar$PowerBill
+
+XX.star <- solve(L) %*%  my.X
+decorr.mod <- lm(Ystar ~ XX.star) #fit de-correlated model
+#check assumptions
+#residuals
+plot(decorr.mod$fitted.values,decorr.mod$residuals,main='Fitted Values vs. Residuals')
+abline(h=0,col='red')
+hist(decorr.mod$residuals,prob=T,main='Histogram of Residuals')
+curve(dnorm(x,0,sd(decorr.mod$residuals)),col='red',add=T)
+
+#linearity
+library(car)
+avPlots(decorr.mod)
+
+##
 
 
 
