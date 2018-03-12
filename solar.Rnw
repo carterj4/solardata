@@ -37,7 +37,7 @@ library(car)
 @
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+%\SweaveOpts{concordance=TRUE}
 \mainmatter
 \title{Connecting work performance to employee satisfaction}
 \titlerunning{Credit}
@@ -122,7 +122,8 @@ To analyze this data we used a Gaussian process, which is a finite collection of
     \mathbf{R} &= \text{structure of covariance matrix} \quad (nxn)
 \end{align*}
 
-
+The guassian proccess model allows for data that is correlated in the response. 
+The added flexibility in the correlation structure allows us to obtain more accurate variance estimates and thus our prediction intervals will be more accurate than if we fit an uncorrelated 
 \subsection{Model Justification}
 \label{modjus}
 % Does the report justify why variables were included and/or excluded?
@@ -165,6 +166,7 @@ When performing Gaussian process regression, there are a few assumptions that ne
 %table of coeffecients for model (we can append uncertainties to this table
 %or add them separately)
 
+Table \ref{coef} gives the estimated coefficients for our model. We estimate the expected power bill to be \$104.89 during non-summer months for regular power and \$180.31 during summer months (June - September). For solar power the peak season months are November through February with an estimated expected bill of \$83.87 and \$21.50 for non peak season months. Even during the winter months when solar panels do not generate as much electricity, the expected power bill is lower for solar during the winter months than regular power during the winter months. While these estimates indicate that solar power saves money, we are interested in predicting how much money has alreacy been saved from switching to solar and predicting our future savings in order to estimate how many years it will take for solar to pay for itself.
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
 % Sun Mar 11 22:51:14 2018
 \begin{table}[ht]
@@ -173,15 +175,37 @@ When performing Gaussian process regression, there are a few assumptions that ne
   \hline
  Coefficient & 2.5\% & Estimate & 97.5\% \\ 
   \hline
-  Season1:SolarN & 93.10 & 104.89 & 116.67 \\ 
-  Season2:SolarN & 161.19 & 180.31 & 199.44 \\ 
-  Season1:SolarY & 7.56 & 21.50 & 35.45 \\ 
-  Season2:SolarY & 63.42 & 83.87 & 104.33 \\ 
+  Regular  & 93.10 & 104.89 & 116.67 \\ 
+  Regular Peak & 161.19 & 180.31 & 199.44 \\ 
+  Solar & 7.56 & 21.50 & 35.45 \\ 
+  Solar Peak & 63.42 & 83.87 & 104.33 \\ 
   Phi & -0.32 & -0.01 & 0.29 \\ 
   Residual SE & 21.50 & 26.10 & 31.70 \\ 
    \hline
 \end{tabular}
+\caption{Table of estimated coefficients}
+\label{coef}
 \end{table}
+
+\begin{figure}
+\centering
+<<prediction,echo=FALSE,out.width="4in",fig.asp=.8>>=
+load("prediction.Rbin")
+plot((22 + 0:m) / 12,out[1,],type="l",ylim=c(min(out),max(out)),xlab="Years from Switching to Solar",ylab="Estimated Savings ($)")
+lines((22 + 0:m) / 12,out[2,],lty=2)
+lines((22 + 0:m) / 12,out[3,],lty=2)
+abline(h=8000,col="red")
+abline(v=(22+70)/12,col="blue")
+abline(v=(which(out[2,] > 8000)[1] - 1 + 22) / 12 , col="blue",lty=2)
+abline(v=(which(out[3,] > 8000)[1] + 22) / 12,col="blue",lty=2)
+@
+\caption{Future Estimated Savings}
+\label{future:pred}
+\end{figure}
+
+Figure \ref{future:pred} shows the estimated savings for each month into the future from switching to solar and corresponding 95\% prediction intervals. The cyclical pattern of the estimated savings is due to the choice of our model, with different seasonal effects for solar and non solar. Customers save less during winter months when the difference between solar and regular power bills is less and save much more in summer months when regular power bills rise and solar power bills drop. To date the consumer has saved an estimated \$2000, with a 95\% prediction interval of (\$1763.75,\$2236.94). In just under two years, the costumer has regained a quarter of their initial investment through savings from switching to solar power. 
+
+We are also interested in the number of additional months until the costumer regains their total investment for switching to solar power. The blue lines in figure \ref{future:pred} correspond to the estimated number years and prediction intervals after switching to solar until the constumer regains their \$8000 dollar investment. It is estimated that it will take an additional 70 months (5.8 years) from February 2018 for solar power to pay for itself. This brings the total estimated time for solar to pay for itself to be 7 years and 8 months with a lower bound of the 95\% prediction interval 7 years and 2 months and the upper bound 8 years and 3 months. The width of this interval is only a year wide, which is a a very good interval estimate for the amount of time it takes for solar to pay for itself. 
 
 
 \section{Conclusion}
