@@ -60,8 +60,7 @@ Solar power is a more environmentally friendly source of power than other tradit
 % to know (i) how much money per month, on average, does this customer save by converting to
 % power and (ii) the projected time at which the customer will recoup the $15,000 cost of the solar
 % equipment based on the projected monthly savings.
-
-Solar power is a more environmentally friendly source of power than other traditional sources such as fossil fuels. Individuals that convert their homes to solar power can also often save money by generating their own power rather then solely to depend on power companies. Using the payment history of a single customer's power bills before and after having switched to solar power, we intend to explore a few questions that would be of particular interest to a solar power company. We will assess the average monthly savings of a customer who has converted to solar power, and how long it will take on average for a customer to recover the initial \$8000 cost of converting to solar power. With answers to these questions, solar power companies can help their customers to better understand the benefits of switching to solar power. This analysis will help solar companies to increase profit, and contribute to an overall cleaner environment. 
+Solar power is a more environmentally friendly source of power than other traditional sources such as fossil fuels. Individuals that convert their homes to solar power can also often save money by generating their own power rather then solely depending on municipal power companies. Using the payment history of a single customer's power bills before and after having switched to solar power, we intend to explore a few questions that would be of particular interest to a solar power company. We will assess the average monthly savings of a customer who has converted to solar power, and how long it will take on average for a customer to recover the initial \$8000 cost of converting to solar power. With answers to these questions, solar power companies can help their customers to better understand the benefits of switching to solar power. This analysis will help solar companies to increase profit, and contribute to an overall cleaner environment. 
 
 \section{Data}
 \label{data}
@@ -233,7 +232,15 @@ abline(v=(which(out[3,] > 8000)[1] + 22) / 12,col="blue",lty=2)
 
 Figure \ref{future:pred} shows the estimated savings for each month into the future from switching to solar and corresponding 95\% prediction intervals. The cyclical pattern of the estimated savings is due to the choice of our model, with different seasonal effects for solar and non solar. Customers save less during winter months when the difference between solar and regular power bills is less and save much more in summer months when regular power bills rise and solar power bills drop. Specifically, a customer will save approximately \$160 per month during non solar peak summer months, and \$21 a month during winter peak solar months and \$83.50 a month for non peak season months for both solar and non solar. This ends up as an overall average savings of about \$88 per month. To date the consumer has saved an estimated \$2000, with a 95\% prediction interval of (\$1763.75, \$2236.94). In just under two years, the costumer has regained a quarter of their initial investment through savings from switching to solar power. 
 
-We are also interested in the number of additional months until the customer regains their total investment from switching to solar power. The blue lines in figure \ref{future:pred} correspond to the estimated number of years and prediction intervals after switching to solar until the costumer regains their \$8000 dollar investment. We predict that it will take an additional 70 months (5.8 years) from February 2018 for solar power to pay for itself. This brings the total estimated time for solar to pay for itself to be 7 years and 8 months with a lower bound of the 95\% prediction interval at 7 years and 2 months and the upper bound at 8 years and 3 months. The width of this interval is only a year wide, which is a very good interval estimate for the amount of time it takes for solar to pay for itself. 
+We are also interested in the number of additional months until the customer regains their 
+total investment from switching to solar power. The blue lines in figure \ref{future:pred}
+correspond to the estimated number of years and prediction intervals after switching to solar
+until the costumer regains their \$8000 dollar investment. We predict that it will take an
+additional 70 months (5.8 years) from February 2018 for solar power to pay for itself. This
+brings the total estimated time for solar to pay for itself to be 7 years and 8 months with a
+lower bound of the 95\% prediction interval at 7 years and 2 months and the upper bound at 8
+years and 3 months. The width of this interval is only a year wide, which is a very good
+interval estimate for the amount of time it takes for solar to pay for itself. 
 
 
 \section{Conclusion}
