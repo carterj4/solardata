@@ -61,7 +61,7 @@ Solar power is a more environmentally friendly source of power than other tradit
 % power and (ii) the projected time at which the customer will recoup the $15,000 cost of the solar
 % equipment based on the projected monthly savings.
 
-Solar power is a more environmentally friendly source of power than other traditionaly sources such as fossil fuels. Individuals that convert their homes to solar power can also often save money by generating their own power rather then constantly having to depend on power companies. Using the payment history of a single customer's power bills before and after having switched to solar power, we intend to explore a few questions that would be of particular interest to a solar power sales company. We will assess the average monthly savings of a customer who has converted to solar power, and how long it will take on average for a customer to recover the recover the initial \$8000 cost of converting to solar power. With answers to these questions, solar power sales companies can help their customers to better understand the benefits of switching to solar power. This will help the sales company to increase its profits, and contribute to on overall cleaner environment. 
+Solar power is a more environmentally friendly source of power than other traditionaly sources such as fossil fuels. Individuals that convert their homes to solar power can also often save money by generating their own power rather then constantly having to depend on power companies. Using the payment history of a single customer's power bills before and after having switched to solar power, we intend to explore a few questions that would be of particular interest to a solar power sales company. We will assess the average monthly savings of a customer who has converted to solar power, and how long it will take on average for a customer to recover the initial \$8000 cost of converting to solar power. With answers to these questions, solar power sales companies can help their customers to better understand the benefits of switching to solar power. This will help the solar companies to increase its profits, and contribute to on overall cleaner environment. 
 
 
 \section{Data}
@@ -102,7 +102,7 @@ A Gaussian process is a finite collection of random variables that follow a mult
     \mathbf{R} &= \text{structure of covariance matrix} \quad (nxn)
 \end{align*}
 
-The guassian proccess model allows for data that is correlated in the response. We assume that that the power bills are correlated with a first-order autoregressive structure as shown below:
+The Guassian proccess model allows for data that is correlated in the response. We assume that that the power bills are correlated with a first-order autoregressive structure as shown below, where $\sigma^{2}$ is the variance term and $\rho$ is the correlation coefficient:
 $$
 \sigma^2
 \begin{bmatrix}
@@ -144,7 +144,7 @@ $$
 $$
 where $\epsilon|\mathtt{Solar}$ has an autoregressive correlation structure with parameters $\sigma^2$ and $\rho$. Thus we assume that the times series for the power bills for solar and non solar are independent of each other.  We do expect the amount of power used to be correlated month to month, but after switching to solar we expect that the correlation for the power bill for solar power is independent of non solar. This assumption of independent time series is not unreasonable since we adjust for the the peak season effect for solar and non solar power bills.
 
-This model allows us account for the correlation of the power bill for solar and non solar power. In addition we can use the the guassian process model to predict future power bills, given the power bills we have already observed. 
+This model allows us account for the correlation of the power bill for solar and non solar power. In addition we can use the the Guassian process model to predict future power bills, given the power bills we have already observed. 
 
 \subsection{Model Justification}
 \label{modjus}
@@ -234,7 +234,7 @@ We are also interested in the number of additional months until the customer reg
 % Did the report summarize how the goals of the study were met?
 % Did the report discuss any shortcomings of the approach/model used?
 % Did the report provide suggestions for 'next steps' in the analysis or further questions that may be of interest?
-The intial goals of this analysis were to determine how much money per month on average a customer can save by switching to solar power, and to determine the amount of time at which a customer will recoup the initial cost of \$8000 solar power equipment. From this analysis we determined that a customer will save approximately \$160 per month during summer months, and \$21 a month during winter months. This ends up as an overall average savings of about \$90 per month. Additionally, we conclude that it will take approximately 7 years and 8 months for a customer to recoup the cost of converting to solar power. These findings will be helpful for solar companies to promote the benfits of solar power, and will help potential customers to financially prepare when converting to solar power. Some shortcomings of this analysis include the limited amount of data available, and the lack of a strong correlation in the data. We only have data from one customer in one location which limits the ability to scale our conclusions. This analysis could be improved after gathering data for a longer period of time, and for multiple customers. It may also be interesting to assess the effectiveness of solar power for different regions by comparing rate-adjusted savings on power bills for customer in different regions.
+The initial goals of this analysis were to determine how much money per month on average a customer can save by switching to solar power, and to determine the amount of time at which a customer will recoup the initial cost of \$8000 solar power equipment. From this analysis we determined that a customer will save approximately \$160 per month during summer months, and \$21 a month during winter months. This ends up as an overall average savings of about \$90 per month. Additionally, we conclude that it will take approximately 7 years and 8 months for a customer to recoup the cost of converting to solar power. These findings will be helpful for solar companies to promote the benfits of solar power, and will help potential customers to financially prepare when converting to solar power. Some shortcomings of this analysis include the limited amount of data available, and the lack of a strong correlation in the data. We only have data from one customer in one location which limits the ability to scale our conclusions. This analysis could be improved after gathering data for a longer period of time, and for multiple customers. It may also be interesting to assess the effectiveness of solar power for different regions by comparing rate-adjusted savings on power bills for customer in different regions.
 
  
 %
