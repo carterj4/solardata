@@ -177,10 +177,19 @@ XX.star <- solve(L) %*%  my.X
 decorr.mod <- lm(Ystar ~ XX.star) #fit de-correlated model
 #check assumptions
 #residuals
-plot(decorr.mod$fitted.values,decorr.mod$residuals,main='Fitted Values vs. Residuals')
+pdf('residplot.pdf')
+plot(decorr.mod$fitted.values,decorr.mod$residuals,
+     main='Fitted Values vs. Residuals',xlab='Fitted Values',ylab='Residuals')
 abline(h=0,col='red')
-hist(decorr.mod$residuals,prob=T,main='Histogram of Residuals')
+dev.off()
+pdf('residhist.pdf')
+hist(decorr.mod$residuals,prob=T,
+     main='Histogram of Residuals',
+     xlab='Residuals')
 curve(dnorm(x,0,sd(decorr.mod$residuals)),col='red',add=T)
+dev.off()
+
+
 
 #linearity
 library(car)
