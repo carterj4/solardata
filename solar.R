@@ -224,6 +224,7 @@ prediction <- function(n,k,R,X.all,w) {
   pred.var <- R[n+1:k,n+1:k] - R[n+1:k,1:n] %*% solve(R[1:n,1:n]) %*% R[1:n,n+1:k]
   list(pred.mn,pred.var)
 }
+
 ############################################
 # Cross validation for solar and non solar #
 ############################################

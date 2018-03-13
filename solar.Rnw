@@ -140,7 +140,9 @@ Figures \ref{smoothnon} and \ref{smoothsol} show the the seasonal trends in in p
 $$
 \mathrm{Y} = \mathtt{Solar0:Peak0} \mu_1 + \mathtt{Solar0:Peak1} \mu_2 + \mathtt{Solar1:Peak0} \mu_3 + \mathtt{Solar1:Peak1} \mu_4 + \epsilon
 $$
-where $\epsilon|\mathtt{Solar}$ has an autoregressive correlation structure with parameters $\sigma^2$ and $\rho$. Thus we assume that the times series for the power bills for solar and non solar are independent of each other. This assumption is not unreasonable since we adjust for the the peak season effect for solar and non solar power bills.
+where $\epsilon|\mathtt{Solar}$ has an autoregressive correlation structure with parameters $\sigma^2$ and $\rho$. Thus we assume that the times series for the power bills for solar and non solar are independent of each other.  We do expect the amount of power used to be correlated month to month, but after switching to solar we expect that the correlation for the power bill for solar power is independent of non solar. This assumption of independent time series is not unreasonable since we adjust for the the peak season effect for solar and non solar power bills.
+
+This model allows us account for the correlation of the power bill for solar and non solar power. In addition we can use the the guassian process model to predict future power bills, given the power bills we have already observed. 
 
 \subsection{Model Justification}
 \label{modjus}
