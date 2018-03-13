@@ -47,7 +47,7 @@ library(car)
 
 \maketitle
 \begin{abstract}
-Solar power is a more environmentally friendly source of power than other traditionaly sources such as fossil fuels. In this study we looked into the potential for customers to save money by converting their homes to solar power. Specifically, we looked at the payment history of a single customer before and after converting to solar power, and used a first order autoregressive model to assess how much he was saving on his monthly power bill and how long it would take him to recover the intial cost of converting to solar power.
+Solar power is a more environmentally friendly source of power than other traditional sources such as fossil fuels. In addition solar power can save home owners money because solar panels generate electricity for the house to use. This reduces the amount of power used from municipal power sources and therefore reduces the monthly power bill. In this study we looked into the potential for customers to save money by converting their homes to solar power. Specifically, we looked at the payment history of a single customer before and after converting to solar power, and used a first order autoregressive model to assess how much they were saving on their monthly power bill and how long it would take them to recover the intial cost of converting to solar power.
 \end{abstract}
 
 \section{Introduction}
@@ -61,8 +61,7 @@ Solar power is a more environmentally friendly source of power than other tradit
 % power and (ii) the projected time at which the customer will recoup the $15,000 cost of the solar
 % equipment based on the projected monthly savings.
 
-Solar power is a more environmentally friendly source of power than other traditionaly sources such as fossil fuels. Individuals that convert their homes to solar power can also often save money by generating their own power rather then constantly having to depend on power companies. Using the payment history of a single customer's power bills before and after having switched to solar power, we intend to explore a few questions that would be of particular interest to a solar power sales company. We will assess the average monthly savings of a customer who has converted to solar power, and how long it will take on average for a customer to recover the initial \$8000 cost of converting to solar power. With answers to these questions, solar power sales companies can help their customers to better understand the benefits of switching to solar power. This will help the solar companies to increase its profits, and contribute to on overall cleaner environment. 
-
+Solar power is a more environmentally friendly source of power than other traditional sources such as fossil fuels. Individuals that convert their homes to solar power can also often save money by generating their own power rather then solely to depend on power companies. Using the payment history of a single customer's power bills before and after having switched to solar power, we intend to explore a few questions that would be of particular interest to a solar power company. We will assess the average monthly savings of a customer who has converted to solar power, and how long it will take on average for a customer to recover the initial \$8000 cost of converting to solar power. With answers to these questions, solar power companies can help their customers to better understand the benefits of switching to solar power. This analysis will help solar companies to increase profit, and contribute to an overall cleaner environment. 
 
 \section{Data}
 \label{data}
@@ -71,7 +70,7 @@ Solar power is a more environmentally friendly source of power than other tradit
 %  any problems/issues? 
 % Are the goals of the analysis clearly stated?
 
-The data used in this analysis consists of 51 months of power bills for a single customer. The first 29 months are from before the customer converted to solar power, and the last 22 months are from after converting to solar power. In figure \ref{fig:data} we can see that after converting to solar power, the customer had a lower power bill on average. One thing to note about these data is that they are correlated in time. Using a regular linear regression model in the presence of correlated data would still provide unbiased estimates, but we wouldn't be able to accurately quantify the uncertainty of those estimates. Consequently, we will use Gaussian process regression which allows us to specify a covariance structure that will account for the correlation in the data.
+The data used in this analysis consists of 51 months of power bills for a single customer. The first 29 months are from before the customer converted to solar power, and the last 22 months are from after converting to solar power. In figure \ref{fig:data} we can see that after converting to solar power, the customer had a lower power bill on average. One thing to note about these data is that they are correlated in time. Using a regular linear regression model to analyze the correlated data would still provide unbiased estimates, but we wouldn't be able to accurately quantify the uncertainty of those estimates. Consequently, we will use Gaussian process regression which allows us to specify a covariance structure that will account for the correlation in the data.
 
 \begin{figure}[!ht]
 \centering
@@ -102,7 +101,7 @@ A Gaussian process is a finite collection of random variables that follow a mult
     \mathbf{R} &= \text{structure of covariance matrix} \quad (nxn)
 \end{align*}
 
-The Guassian proccess model allows for data that is correlated in the response. We assume that that the power bills are correlated with a first-order autoregressive structure as shown below, where $\sigma^{2}$ is the variance term and $\rho$ is the correlation coefficient:
+The Guassian proccess model allows for data that is correlated in the response. We assume that the power bills are correlated with a first-order autoregressive structure as shown below, where $\sigma^{2}$ is the variance term and $\rho$ is the correlation coefficient:
 $$
 \sigma^2
 \begin{bmatrix}
@@ -117,9 +116,6 @@ This correlation structure assumes that the power bill for each month is most co
 The added flexibility in the correlation structure allows us to obtain more accurate variance estimates. Therefore, our prediction intervals will be more accurate with the autoregressive model than if we fit an uncorrelated linear model. 
 
 When performing Gaussian process regression, there are a few assumptions that need to hold. We assume that the data are multivariate-normally distributed and that there is constant variance. Since we are accounting for the correlation in the data, we do not assume independence, but rather dependence. These assumptions will be further addressed and verified in following sections.
-
- 
-
 
 \subsection{Model}
 % Was the model written out correctly?
@@ -138,13 +134,13 @@ When performing Gaussian process regression, there are a few assumptions that ne
     \end{floatrow}
   \end{figure}
   
-Figures \ref{smoothnon} and \ref{smoothsol} show the the seasonal trends in in power bill for regular power and solar power. Regular power bills are much higher for June through September; Solar power bills are greater from November through February. We create a "peak season" indicator variable to allow for different power bill prices for the respective peak season months given solar and regular power. We fit a cell means model for each combination of Solar power status and the peak season indicator. Thus our $\boldsymbol{\beta}$ vector is a vector of means for each combination. The is model written as follows:
+Figures \ref{smoothnon} and \ref{smoothsol} show the the seasonal trends in power bills for regular power and solar power. Regular power bills are much higher for June through September; Solar power bills are greater from November through February. We create a "peak season" indicator variable to allow for different estimated power bill prices for the respective peak season months given solar or regular power. We fit a cell means model for each combination of Solar power status and the peak season indicator. Thus our $\boldsymbol{\beta}$ vector is a vector of means for each combination. The model is written as follows:
 $$
 \mathrm{Y} = \mathtt{Solar0:Peak0} \mu_1 + \mathtt{Solar0:Peak1} \mu_2 + \mathtt{Solar1:Peak0} \mu_3 + \mathtt{Solar1:Peak1} \mu_4 + \epsilon
 $$
-where $\epsilon|\mathtt{Solar}$ has an autoregressive correlation structure with parameters $\sigma^2$ and $\rho$. Thus we assume that the times series for the power bills for solar and non solar are independent of each other.  We do expect the amount of power used to be correlated month to month, but after switching to solar we expect that the correlation for the power bill for solar power is independent of non solar. This assumption of independent time series is not unreasonable since we adjust for the the peak season effect for solar and non solar power bills.
+where $\epsilon|\mathtt{Solar}$ has an autoregressive correlation structure with parameters $\sigma^2$ and $\rho$. Thus we assume that the times series for the power bills for solar and non solar are independent of each other.  We do expect monthly power usage to be correlated, but after adjusting for the effect of season and solar power do not expect the power bills to be correlated between solar and non solar time series. This assumption of independent time series is not unreasonable since we adjust for the the peak season effect for solar and non solar power bills.
 
-This model allows us account for the correlation of the power bill for solar and non solar power. In addition we can use the the Guassian process model to predict future power bills, given the power bills we have already observed. 
+This model allows us account for the correlation of the power bills for solar and non solar power. In addition we can use the the Guassian process model to predict future power bills, given the power bills we have already observed. 
 
 \subsection{Model Justification}
 \label{modjus}
@@ -160,7 +156,11 @@ This model allows us account for the correlation of the power bill for solar and
 \caption{\label{modfit} AR(1) model compared with observations from data}
 \end{figure}
 
- These assumptions however are hard to verify given that we only have one correlated observation. So to check the assumptions we can 'decorrelate' the model using the lower cholesky decomposition of the covariance matrix of the original model, $\sigma^{2} \mathbf{R}$. Once decorrelated, we use plots of the residuals to verify the assumptions of constant variance, and normally distributed residuals. Figures \ref{resplot} and \ref{reshist} show the plot of fitted values vs residuals and the distribution of the residuals respectively. The plots show that the variance isn't really constant, and that the residuals don't appear to be approximately normally distributed. (It turns out that by accounting for a seasonal effect and due to the limited amount of data, there doesn't appear to be any significant correlation. However, for the sake of completing this as a correlated data analysis we chose to proceed, even though the assumptions don't really hold.) We also used this decorrelated model to get an $R^2$ value to assess the fit of our model. The resulting $R^2$ value of 0.8057 tells us that 80\% of the variance in monthly power bill payment is explained by our model. The goodness of fit can be visualized in figure \ref{modfit} which shows the fitted model plotted along with the observed data. We conclude that our model fits the data well, especially considering that we have relatively limited data. 
+ The assumptions of the Gaussian process model are difficult to verify given that we have a sinlge observation at each time point. So to check the assumptions we 'decorrelated' the model using the lower cholesky decomposition of the covariance matrix of the original model, $\sigma^{2} \mathbf{R}$. Mulitplying our repsonse by the inverse of the lower cholesky decomposition results in power bills that are independent of each other. One can simply think of this operation as `dividing' out the correlation between the response.
+ 
+ Once decorrelated, we use plots of the residuals to verify the assumptions of constant variance, and normally distributed residuals. Figures \ref{resplot} and \ref{reshist} show the plot of fitted values vs residuals and the distribution of the residuals respectively. The plots show that the variance isn't really constant, and that the residuals do appear to be approximately normal with the exception of a few outliers. Part of reason for non constant variance is the way we constructed our model; there is greater variation in the power bill for peak season months as compared to normal power bill months. However, we are constrained to simply the number of time factors as we do not have many data points. (It turns out that by accounting for a seasonal effect and due to the limited amount of data, there does not appear to be any significant correlation. However, for the sake of completing this as a correlated data analysis we chose to proceed with a autoregressive model.) 
+ 
+ We also used this decorrelated model to get an $R^2$ value to assess the fit of our model. The resulting $R^2$ value of 0.8057 tells us that 80\% of the variance in monthly power bill payment is explained by our model. This is a high $R^2$ value and indicates that our model is useful, even though we should be wary of our prediction results. The goodness of fit can be visualized in figure \ref{modfit} which shows the fitted model plotted along with the observed data. We conclude that our model fits the data well, especially considering that we have relatively limited data. 
 
 %residual plots for model assumptions
   \begin{figure}[!ht]
@@ -188,11 +188,11 @@ This model allows us account for the correlation of the power bill for solar and
 %table of coeffecients for model (we can append uncertainties to this table
 %or add them separately)
 
-Table \ref{coef} gives the estimated coefficients for our model. We estimate the expected power bill to be \$104.89 during non-summer months for regular power and \$180.31 during summer months (June - September). For solar power the peak season months are November through February with an estimated expected bill of \$83.87 and \$21.50 for non peak season months. Even during the winter months when solar panels do not generate as much electricity, the expected power bill is lower for solar during the winter months than regular power during the winter months. While these estimates indicate that solar power saves money, we are interested in predicting how much money has alreacy been saved from switching to solar and predicting our future savings in order to estimate how many years it will take for solar to pay for itself. 
+Table \ref{coef} gives the estimated coefficients for our model. We estimate the expected power bill to be \$104.89 during non-summer months for regular power and \$180.31 during summer months (June - September). For solar power the peak season months are November through February with an estimated expected bill of \$83.87 and \$21.50 for non peak season months. Even during the winter months when solar panels do not generate as much electricity, the expected power bill is lower for solar than it is regular power during the winter months. While these estimates indicate that solar power saves money, we are interested in predicting how much money has alreacy been saved from switching to solar and predicting our future savings in order to estimate how many years it will take for solar to pay for itself. 
 
 \subsection{Model Performance}
 
-We ran a cross validation to test how well our model predicts. Because our data is correlated in time, we must preserve the time series structure when we run a cross validation. To split the data into a test and training set we removed the last twelve observations from both the solar power bills and the regular power bills, 24 observations removed in total. We fit our model on the remaining training dataset and then tested how well the model predicted on the removed data points. The root mean square error, or our average error in estimate is estimated to be \$146.20. This value of rmse seems rather high, however, the last few power bills for solar power are outliers which inflates the our single estimate of rmse from cross validation. The Coverage of our confidence intervals is estimated to be 0.875, which given the small number of observations in our test dataset is actually quite close to the expected coverage of 0.95. The cross validation indicates that there may be slight error in our predictions, yet because of the size and structure of the dataset we can only obtain a single estimate from cross validation instead of applying montecarlo or k-fold cross validation which give more accurate estimates.
+We ran a cross validation to test how well our model predicts. Because our data is correlated in time, we must preserve the time series structure when we run a cross validation. To split the data into a test and training set we removed the last twelve observations from both the solar power bills and the regular power bills, 24 observations removed in total. We fit our model on the remaining training dataset and then tested how well the model predicted on the removed data points. The root mean square error, or our average estimation error is estimated to be \$146.20. This value of rmse seems rather high, however, the last few power bills for solar power are outliers which inflates the single estimate of rmse from the cross validation. The coverage of our confidence intervals is estimated to be 0.875, which given the small number of observations in our test dataset is actually quite close to the expected coverage of 0.95. The cross validation indicates that there may be slight error in our predictions, yet because of the size and structure of the dataset we can only obtain a single estimate from cross validation instead of applying Monte Carlo or k-fold cross validation which give more accurate estimates.
 
 \subsection{Predicted Savings}
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
@@ -231,34 +231,22 @@ abline(v=(which(out[3,] > 8000)[1] + 22) / 12,col="blue",lty=2)
 \label{future:pred}
 \end{figure}
 
-Figure \ref{future:pred} shows the estimated savings for each month into the future from switching to solar and corresponding 95\% prediction intervals. The cyclical pattern of the estimated savings is due to the choice of our model, with different seasonal effects for solar and non solar. Customers save less during winter months when the difference between solar and regular power bills is less and save much more in summer months when regular power bills rise and solar power bills drop. To date the consumer has saved an estimated \$2000, with a 95\% prediction interval of (\$1763.75,\$2236.94). In just under two years, the costumer has regained a quarter of their initial investment through savings from switching to solar power. 
+Figure \ref{future:pred} shows the estimated savings for each month into the future from switching to solar and corresponding 95\% prediction intervals. The cyclical pattern of the estimated savings is due to the choice of our model, with different seasonal effects for solar and non solar. Customers save less during winter months when the difference between solar and regular power bills is less and save much more in summer months when regular power bills rise and solar power bills drop. Specifically, a customer will save approximately \$160 per month during non solar peak summer months, and \$21 a month during winter peak solar months and \$83.50 a month for non peak season months for both solar and non solar. This ends up as an overall average savings of about \$88 per month. To date the consumer has saved an estimated \$2000, with a 95\% prediction interval of (\$1763.75, \$2236.94). In just under two years, the costumer has regained a quarter of their initial investment through savings from switching to solar power. 
 
-We are also interested in the number of additional months until the customer regains their total investment for switching to solar power. The blue lines in figure \ref{future:pred} correspond to the estimated number years and prediction intervals after switching to solar until the constumer regains their \$8000 dollar investment. It is estimated that it will take an additional 70 months (5.8 years) from February 2018 for solar power to pay for itself. This brings the total estimated time for solar to pay for itself to be 7 years and 8 months with a lower bound of the 95\% prediction interval 7 years and 2 months and the upper bound 8 years and 3 months. The width of this interval is only a year wide, which is a a very good interval estimate for the amount of time it takes for solar to pay for itself. 
+We are also interested in the number of additional months until the customer regains their total investment from switching to solar power. The blue lines in figure \ref{future:pred} correspond to the estimated number of years and prediction intervals after switching to solar until the costumer regains their \$8000 dollar investment. We predict that it will take an additional 70 months (5.8 years) from February 2018 for solar power to pay for itself. This brings the total estimated time for solar to pay for itself to be 7 years and 8 months with a lower bound of the 95\% prediction interval at 7 years and 2 months and the upper bound at 8 years and 3 months. The width of this interval is only a year wide, which is a very good interval estimate for the amount of time it takes for solar to pay for itself. 
 
 
 \section{Conclusion}
 % Did the report summarize how the goals of the study were met?
 % Did the report discuss any shortcomings of the approach/model used?
 % Did the report provide suggestions for 'next steps' in the analysis or further questions that may be of interest?
-The initial goals of this analysis were to determine how much money per month on average a customer can save by switching to solar power, and to determine the amount of time at which a customer will recoup the initial cost of \$8000 solar power equipment. From this analysis we determined that a customer will save approximately \$160 per month during summer months, and \$21 a month during winter months. This ends up as an overall average savings of about \$90 per month. Additionally, we conclude that it will take approximately 7 years and 8 months for a customer to recoup the cost of converting to solar power. These findings will be helpful for solar companies to promote the benfits of solar power, and will help potential customers to financially prepare when converting to solar power. Some shortcomings of this analysis include the limited amount of data available, and the lack of a strong correlation in the data. We only have data from one customer in one location which limits the ability to scale our conclusions. This analysis could be improved after gathering data for a longer period of time, and for multiple customers. It may also be interesting to assess the effectiveness of solar power for different regions by comparing rate-adjusted savings on power bills for customer in different regions.
+The initial goals of this analysis were to determine how much money per month on average a customer can save by switching to solar power, and to determine the amount of time at which a customer will recoup the initial cost of \$8000 solar power equipment. From this analysis we determined that a customer will save approximately \$160 per month during summer months, and \$21 a month during winter months, with overall average savings of about \$88 per month. Additionally, we conclude that it will take approximately 7 years and 8 months for a customer to recoup the cost of converting to solar power. These findings will be helpful for solar companies to promote the benfits of solar power, and will help potential customers to financially prepare when converting to solar power. Some shortcomings of this analysis include the limited amount of data available, and the lack of a strong correlation in the data after accounting for seasonality. We only have data from one customer in one location which limits the ability to scale our conclusions. This analysis could be improved by gathering data for a longer period of time, and for multiple customers. It may also be interesting to assess the effectiveness of solar power for different regions by comparing rate-adjusted savings on power bills for customer in different regions.
 
- 
+
 %
 % ---- Bibliography ----
 %
 %\bibliographystyle{plain}
 %\bibliography{comics}
 % \pagebreak
-\newpage
-\textbf{Distribution of work:}
-\begin{itemize}
-\item Intro : Matt
-\item Data : Matt
-\item Methods : Brandon
-\item Model : Both
-\item Check Assumptions : Matt
-\item Model Performance : Brandon
-\item Results : Brandon
-\item Conclusion : Matt
-\end{itemize}
 \end{document}
